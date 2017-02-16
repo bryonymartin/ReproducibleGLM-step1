@@ -31,6 +31,35 @@ knitr::kable(head(titanic_all))
 knitr::kable(summary(titanic_all))
 ```
 
+## Refined Titanic data
+```{r}
+# near zero variance - should remove these
+nsv = caret::nearZeroVar(titanic_all) #, saveMetrics = TRUE)
+titanic_all_NZV <- titanic_all[, -nsv]
+
+columns <- colnames(titanic_all_NZV)
+Index <- which(colnames(titanic_all_NZV) == "parch")
+print(Index)
+
+# extract 
+numericcols <- sapply(titanic_all, is.numeric)
+titanic_all_numeric <- titanic_all[, numericcols]
+# cor(titanic_all_numeric, use = "complete.obs") #correlation matrix
+cor(titanic_all_numeric, use = "pairwise.complete.obs") #correlation matrix
+# cor(na.omit(titanic_all_numeric))
+colnames(titanic_all_numeric)
+
+# find column numbers where there is correlation
+caret:: findCorrelation(cor(titanic_all_numeric, use = "pairwise.complete.obs"))
+
+# find text columns
+textcols <- sapply(titanic_all, is.character)
+# titanic_all[, textcols]
+table(titanic_all[,c("survived", "embarked")])
+summary(titanic_all$pclass)
+
+```
+
 
 ## Defensive stuff
 ### Store a copy (one-off)
